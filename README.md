@@ -4,7 +4,21 @@ This project is a C++ branch prediction simulator that models how CPUs predict t
 
 For each branch in the trace, the simulator makes a prediction (Taken or Not Taken), compares it with the actual outcome, updates the predictor state, and tracks mispredictions and overall accuracy. This project focuses only on branch prediction and does not simulate full CPU execution or pipelines.
 
-## What This Simulator Does
+## 1. Architectural Concepts
+
+### What is Branch Prediction?
+In a CPU, instructions are processed in a pipeline - like an assembly line. To keep this line moving, the CPU needs to know which instructions come next. However, conditional branches like if statements or loops create a fork in the road!
+
+The CPU doesn't want to wait until the if condition is acutally evaluated to find out where to go next because it would waste time/stall the pipeline. Instead, it guesses the outcome. If it guesses right, the CPU stays fast. However, a wrong prediction/guess means, it must throw away the speculative work and restart, which is expensive. 
+
+* Taken (T / 1): The condition was true; the program jumps to a different memory address.
+
+* Not Taken (NT / 0): The condition was false; the program continues to the next sequential instruction.
+
+### What is a Branch Trace? 
+A trace file is a log of a real program's execution. It tells us exactly what happened in the past so we can test our guesses against reality.
+
+## 2. What This Simulator Does
 
 * Reads a branch trace file (PC address + actual outcome)
 * Predicts each branch as Taken or Not Taken
@@ -14,7 +28,7 @@ For each branch in the trace, the simulator makes a prediction (Taken or Not Tak
 
 This is not a full CPU simulator because it focuses only on branch prediction.
 
-## Implemented Branch Predictors
+## 3. Implemented Branch Predictors
 
 ### Bimodal Predictor
 The bimodal predictor uses a table of 2-bit saturating counters indexed by the branch PC. Each counter tracks whether a branch is usually taken or not taken. This predictor is simple and serves as a baseline for comparison.
