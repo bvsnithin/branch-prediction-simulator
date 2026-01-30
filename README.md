@@ -1,12 +1,8 @@
 # Branch Prediction Simulator
-This project is a C++ branch prediction simulator that models how modern CPUs predict branch instructions.
 
-It supports:
+This project is a C++ branch prediction simulator that models how CPUs predict the direction of branch instructions. The simulator uses offline branch trace files containing program counter (PC) values and actual branch outcomes, then evaluates how accurately different branch prediction algorithms perform.
 
-* Bimodal branch predictor
-* GShare branch predictor
-* 2-bit saturating counters
-* Offline simulation using branch trace files
+For each branch in the trace, the simulator makes a prediction (Taken or Not Taken), compares it with the actual outcome, updates the predictor state, and tracks mispredictions and overall accuracy. This project focuses only on branch prediction and does not simulate full CPU execution or pipelines.
 
 ## What This Simulator Does
 
@@ -17,3 +13,24 @@ It supports:
 * Reports prediction accuracy
 
 This is not a full CPU simulator because it focuses only on branch prediction.
+
+## Implemented Branch Predictors
+
+### Bimodal Predictor
+The bimodal predictor uses a table of 2-bit saturating counters indexed by the branch PC. Each counter tracks whether a branch is usually taken or not taken. This predictor is simple and serves as a baseline for comparison.
+
+### GShare Predictor
+GShare improves on the bimodal predictor by using a global history register. The global history is XORed with bits from the branch PC to index the prediction table, allowing the predictor to capture correlations between different branches.
+
+### Local History Predictor
+The local history predictor maintains a separate history for each branch. A local history table records recent outcomes for individual branches, which is then used to index a pattern history table of 2-bit counters. This helps capture repeating patterns specific to a branch.
+
+### GSelect Predictor
+GSelect is similar to GShare but uses concatenation instead of XOR. Bits from the branch PC are combined with the global history register to form the index, allowing a comparison between different indexing strategies.
+
+### Tournament (Hybrid) Predictor
+The tournament predictor combines multiple predictors, typically bimodal and GShare. A chooser table learns which predictor is more accurate for each branch and selects the best prediction dynamically.
+
+### YAGS Predictor
+YAGS (Yet Another Global Scheme) uses a bimodal predictor as a base and adds small exception caches for taken and not-taken branches. These caches correct cases where the bimodal predictor consistently makes mistakes, improving accuracy with modest complexity.
+
