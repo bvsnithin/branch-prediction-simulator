@@ -48,3 +48,55 @@ The tournament predictor combines multiple predictors, typically bimodal and GSh
 ### YAGS Predictor
 YAGS (Yet Another Global Scheme) uses a bimodal predictor as a base and adds small exception caches for taken and not-taken branches. These caches correct cases where the bimodal predictor consistently makes mistakes, improving accuracy with modest complexity.
 
+## 3. Running the Project (Windows)
+
+### 1. Install Visual Studio Code
+
+Download and install Visual Studio Code from the official documentation if you don't have it
+
+- https://code.visualstudio.com/docs/setup/windows
+
+After installation, open VS Code and install the **C/C++** extension by Microsoft from the Extensions tab.
+
+---
+
+### 2. Install a C++ Compiler (Windows)
+
+To compile C++ on Windows, install **MinGW-w64** or **MSYS2** and ensure `g++` is added to your system `PATH`.
+
+Official VS Code documentation for setting up C++ on Windows:
+
+- https://code.visualstudio.com/docs/cpp/config-mingw
+
+Verify the installation by running:
+
+```bash
+g++ --version
+```
+---
+
+### 3. Build the Project
+
+From the project root directory, compile the program using:
+
+```bash
+g++ main.cpp -o simulator
+```
+
+---
+
+### 4. Run the Simulator
+
+Execute the compiled program with the trace file:
+
+```bash
+./simulator trace.txt
+```
+----
+macOS Note
+
+For macOS users, compile using clang++:
+
+```bash
+clang++ main.cpp -o simulator
+```
