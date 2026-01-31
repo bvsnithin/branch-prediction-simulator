@@ -4,6 +4,16 @@ This project is a C++ branch prediction simulator that models how CPUs predict t
 
 For each branch in the trace, the simulator makes a prediction (Taken or Not Taken), compares it with the actual outcome, updates the predictor state, and tracks mispredictions and overall accuracy. This project focuses only on branch prediction and does not simulate full CPU execution or pipelines.
 
+
+## Index
+
+1. [Architectural Concepts](#1-architectural-concepts)
+2. [What This Simulator Does](#2-what-this-simulator-does)
+3. [Implemented Branch Predictors](#3-implemented-branch-predictors)
+4. [Running the Project (Windows)](#3-running-the-project-windows)
+
+
+
 ## 1. Architectural Concepts
 
 ### What is Branch Prediction?
