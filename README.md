@@ -44,7 +44,14 @@ This is not a full CPU simulator because it focuses only on branch prediction.
 The bimodal predictor uses a table of 2-bit saturating counters indexed by the branch PC. Each counter tracks whether a branch is usually taken or not taken. This predictor is simple and serves as a baseline for comparison.
 
 ### GShare Predictor
-GShare improves on the bimodal predictor by using a global history register. The global history is XORed with bits from the branch PC to index the prediction table, allowing the predictor to capture correlations between different branches.
+GShare improves on the bimodal predictor by using a global history register. The global history is XORed with bits from the branch PC to index the prediction table, allowing the predictor to capture correlations between different branches (e.g., "If Branch A was taken, Branch B is usually not taken").
+
+### Tournament (Hybrid) Predictor
+Combines Bimodal and GShare. It uses a "Chooser" table of counters to learn which of the two predictors is more reliable for any given branch.
+
+---
+
+## 4. Project Roadmap (Upcoming Predictors)
 
 ### Local History Predictor
 The local history predictor maintains a separate history for each branch. A local history table records recent outcomes for individual branches, which is then used to index a pattern history table of 2-bit counters. This helps capture repeating patterns specific to a branch.
@@ -58,7 +65,7 @@ The tournament predictor combines multiple predictors, typically bimodal and GSh
 ### YAGS Predictor
 YAGS (Yet Another Global Scheme) uses a bimodal predictor as a base and adds small exception caches for taken and not-taken branches. These caches correct cases where the bimodal predictor consistently makes mistakes, improving accuracy with modest complexity.
 
-## 3. Running the Project (Windows)
+## 5. Running the Project (Windows)
 
 ### 1. Install Visual Studio Code
 
@@ -90,23 +97,36 @@ g++ --version
 From the project root directory, compile the program using:
 
 ```bash
-g++ main.cpp -o simulator
+g++ -I include src/main.cpp -o simulator
 ```
 
 ---
 
-### 4. Run the Simulator
+**Bimodal Usage:** ./simulator bimodal <table_size> <trace_file>
+```bash
+./simulator bimodal 1024 traces/gcc_trace.txt
+```
 
-Execute the compiled program with the trace file:
+---
+
+**GShare Usage:** ./simulator gshare <history_bits> <table_size> <trace_file>
 
 ```bash
-./simulator trace.txt
+./simulator gshare 8 4096 traces/gcc_trace.txt
 ```
-----
-macOS Note
+
+---
+
+**Hybrid Usage:** ./simulator hybrid <bimodal_size> <gshare_history> <gshare_size> <chooser_size> <trace_file>
+
+```bash
+./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
+```
+
+---
 
 For macOS users, compile using clang++:
 
 ```bash
-clang++ main.cpp -o simulator
+clang++ -I include src/main.cpp -o simulator
 ```

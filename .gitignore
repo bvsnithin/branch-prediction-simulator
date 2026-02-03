@@ -1,1 +1,8 @@
 .vscode
+simulator
+.DS_Store
+.build
+.cache
+.cmake
+.ninja
+.ninja_deps
