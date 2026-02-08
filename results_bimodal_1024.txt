@@ -1,0 +1,6 @@
+Predictor Results: bimodal
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               448679
+misprediction rate:                     22.43%
+--------------------------------------------

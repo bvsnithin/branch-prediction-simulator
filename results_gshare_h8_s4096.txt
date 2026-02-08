@@ -1,0 +1,7 @@
+COMMAND: ./simulator gshare 8 4096 traces/gcc_trace.txt
+Predictor Results: gshare
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               288381
+misprediction rate:                     14.42%
+--------------------------------------------

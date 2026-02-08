@@ -17,6 +17,13 @@ int main(int argc, char* argv[]) {
     std::string type = argv[1];
     Predictor* predictor = nullptr;
     std::string tracePath;
+    std::string resultFileName;
+    std::string commandEntered;
+
+    for (int i = 0; i < argc; ++i) {
+        commandEntered += argv[i];
+        if (i < argc - 1) commandEntered += " "; // Add space between args
+    }
 
     // 2. Setup the chosen predictor based on your command line input
     try {
@@ -30,6 +37,7 @@ int main(int argc, char* argv[]) {
             predictor = new BimodalPredictor(size);
             tracePath = argv[3];
             std::cout << "Predictor Type: Bimodal | Table Size: " << size << std::endl;
+            resultFileName = "results_bimodal_" + std::string(argv[2]) + ".txt";
         } 
         else if (type == "gshare") {
             // Command: ./simulator gshare 8 4096 traces/gcc_trace.txt
@@ -42,6 +50,7 @@ int main(int argc, char* argv[]) {
             predictor = new GSharePredictor(size, history);
             tracePath = argv[4];
             std::cout << "Predictor Type: GShare | History Bits: " << history << " | Table Size: " << size << std::endl;
+            resultFileName = "results_gshare_h" + std::string(argv[2]) + "_s" + std::string(argv[3]) + ".txt";
         }
         else if (type == "hybrid") {
             // Command: ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
@@ -52,9 +61,10 @@ int main(int argc, char* argv[]) {
             predictor = new HybridPredictor(std::stoi(argv[2]), std::stoi(argv[4]), std::stoi(argv[3]), std::stoi(argv[5]));
             tracePath = argv[6];
             std::cout << "Predictor Type: Hybrid (Tournament)" << std::endl;
+            resultFileName = "results_hybrid.txt";
         }
     } catch (...) {
-        std::cerr << "Error: Please ensure your parameters (like 1024 or 8) are numbers." << std::endl;
+        std::cerr << "Error: Please ensure your parameters (like 1024 or 8) are numbers." << commandEntered << std::endl;
         return 1;
     }
 
@@ -84,16 +94,26 @@ int main(int argc, char* argv[]) {
         predictor->update(addr, actual);
     }
 
-    // 5. Final Output (Matches your requested format)
-    double missRate = ((double)mispredictions / totalBranches) * 100;
-
-    std::cout << "--------------------------------------------" << std::endl;
-    std::cout << "number of branches:                     " << totalBranches << std::endl;
-    std::cout << "number of mispredictions:               " << mispredictions << std::endl;
-    std::fixed(std::cout);
-    std::cout << "misprediction rate:                     " << std::setprecision(2) << missRate << "%" << std::endl;
-    std::cout << "--------------------------------------------" << std::endl;
-
+    // 5. Final Output
+    std::ofstream outFile(resultFileName);
+    if (outFile.is_open()) {
+        double missRate = ((double)mispredictions / totalBranches) * 100;
+        
+        // Write to file
+        outFile << "COMMAND: " << commandEntered << std::endl;
+        outFile << "Predictor Results: " << type << std::endl;
+        outFile << "--------------------------------------------" << std::endl;
+        outFile << "number of branches:                     " << totalBranches << std::endl;
+        outFile << "number of mispredictions:               " << mispredictions << std::endl;
+        outFile << std::fixed << std::setprecision(2);
+        outFile << "misprediction rate:                     " << missRate << "%" << std::endl;
+        outFile << "--------------------------------------------" << std::endl;
+        
+        outFile.close();
+        std::cout << "Simulation complete. Results saved to: " << resultFileName << std::endl;
+    } else {
+        std::cerr << "Error: Could not create result file." << std::endl;
+    }
     delete predictor;
     return 0;
 }
