@@ -6,44 +6,54 @@
 #include "../include/BiModalPredictor.hpp"
 #include "../include/GSharePredictor.hpp"
 #include "../include/HybridPredictor.hpp"
+#include "../include/LocalPredictor.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     // 1. Check if the user provided at least the type of predictor
-    if (argc < 2) {
+    if (argc < 2)
+    {
         std::cout << "Usage: ./simulator <type> <params...> <trace_file>" << std::endl;
         return 1;
     }
 
     std::string type = argv[1];
-    Predictor* predictor = nullptr;
+    Predictor *predictor = nullptr;
     std::string tracePath;
     std::string resultFileName;
     std::string commandEntered;
 
-    for (int i = 0; i < argc; ++i) {
+    for (int i = 0; i < argc; ++i)
+    {
         commandEntered += argv[i];
-        if (i < argc - 1) commandEntered += " "; // Add space between args
+        if (i < argc - 1)
+            commandEntered += " "; // Add space between args
     }
 
     // 2. Setup the chosen predictor based on your command line input
-    try {
-        if (type == "bimodal") {
+    try
+    {
+        if (type == "bimodal")
+        {
             // Command: ./simulator bimodal 1024 traces/gcc_trace.txt
-            if (argc < 4) { 
-                std::cerr << "Error: Bimodal needs [size] and [trace_file]" << std::endl; 
-                return 1; 
+            if (argc < 4)
+            {
+                std::cerr << "Error: Bimodal needs [size] and [trace_file]" << std::endl;
+                return 1;
             }
             int size = std::stoi(argv[2]);
             predictor = new BimodalPredictor(size);
             tracePath = argv[3];
             std::cout << "Predictor Type: Bimodal | Table Size: " << size << std::endl;
             resultFileName = "results_bimodal_" + std::string(argv[2]) + ".txt";
-        } 
-        else if (type == "gshare") {
+        }
+        else if (type == "gshare")
+        {
             // Command: ./simulator gshare 8 4096 traces/gcc_trace.txt
-            if (argc < 5) { 
-                std::cerr << "Error: GShare needs [history_bits] [size] and [trace_file]" << std::endl; 
-                return 1; 
+            if (argc < 5)
+            {
+                std::cerr << "Error: GShare needs [history_bits] [size] and [trace_file]" << std::endl;
+                return 1;
             }
             int history = std::stoi(argv[2]);
             int size = std::stoi(argv[3]);
@@ -52,9 +62,11 @@ int main(int argc, char* argv[]) {
             std::cout << "Predictor Type: GShare | History Bits: " << history << " | Table Size: " << size << std::endl;
             resultFileName = "results_gshare_h" + std::string(argv[2]) + "_s" + std::string(argv[3]) + ".txt";
         }
-        else if (type == "hybrid") {
+        else if (type == "hybrid")
+        {
             // Command: ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
-            if (argc < 7) {
+            if (argc < 7)
+            {
                 std::cerr << "Error: Hybrid needs [bi_size] [gs_hist] [gs_size] [chooser_size] [trace]" << std::endl;
                 return 1;
             }
@@ -63,14 +75,31 @@ int main(int argc, char* argv[]) {
             std::cout << "Predictor Type: Hybrid (Tournament)" << std::endl;
             resultFileName = "results_hybrid.txt";
         }
-    } catch (...) {
+        else if (type == "local")
+        {
+            // Expected: ./simulator local <lht_size> <history_bits> <trace_file>
+            if (argc < 5)
+            {
+                std::cerr << "Error: Local needs [lht_size] [history_bits] and [trace_file]" << std::endl;
+                return 1;
+            }
+            int lhtSize = std::stoi(argv[2]);
+            int bits = std::stoi(argv[3]);
+            predictor = new LocalPredictor(lhtSize, bits);
+            tracePath = argv[4];
+            resultFileName = "results_local_s" + std::string(argv[2]) + "_b" + std::string(argv[3]) + ".txt";
+        }
+    }
+    catch (...)
+    {
         std::cerr << "Error: Please ensure your parameters (like 1024 or 8) are numbers." << commandEntered << std::endl;
         return 1;
     }
 
     // 3. Open the trace file
     std::ifstream traceFile(tracePath);
-    if (!traceFile.is_open()) {
+    if (!traceFile.is_open())
+    {
         std::cerr << "Error: Could not open trace file at " << tracePath << std::endl;
         return 1;
     }
@@ -81,25 +110,29 @@ int main(int argc, char* argv[]) {
     long totalBranches = 0;
     long mispredictions = 0;
 
-    while (traceFile >> std::hex >> addr >> outcome) {
+    while (traceFile >> std::hex >> addr >> outcome)
+    {
         totalBranches++;
         // Handle both 'T'/'t' or 'N'/'n' (or even 1 and 0 if needed)
         bool actual = (outcome == 't' || outcome == 'T' || outcome == '1');
 
         bool prediction = predictor->predict(addr);
-        if (prediction != actual) {
+        if (prediction != actual)
+        {
             mispredictions++;
         }
-        
+
         predictor->update(addr, actual);
     }
 
     // 5. Final Output
     std::ofstream outFile(resultFileName);
-    if (outFile.is_open()) {
+    if (outFile.is_open())
+    {
         double missRate = ((double)mispredictions / totalBranches) * 100;
-        
+
         // Write to file
+        outFile << " ----------------------------------------------------" << std::endl;
         outFile << "COMMAND: " << commandEntered << std::endl;
         outFile << "Predictor Results: " << type << std::endl;
         outFile << "--------------------------------------------" << std::endl;
@@ -108,10 +141,12 @@ int main(int argc, char* argv[]) {
         outFile << std::fixed << std::setprecision(2);
         outFile << "misprediction rate:                     " << missRate << "%" << std::endl;
         outFile << "--------------------------------------------" << std::endl;
-        
+
         outFile.close();
         std::cout << "Simulation complete. Results saved to: " << resultFileName << std::endl;
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Could not create result file." << std::endl;
     }
     delete predictor;

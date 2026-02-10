@@ -1,8 +1,8 @@
  ----------------------------------------------------
-COMMAND: ./simulator.exe bimodal 1024 traces/gcc_trace.txt
-Predictor Results: bimodal
+COMMAND: ./simulator.exe local 1024 10 traces/gcc_trace.txt
+Predictor Results: local
 --------------------------------------------
 number of branches:                     2000000
-number of mispredictions:               448679
-misprediction rate:                     22.43%
+number of mispredictions:               418975
+misprediction rate:                     20.95%
 --------------------------------------------

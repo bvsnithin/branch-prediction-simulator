@@ -49,12 +49,12 @@ GShare improves on the bimodal predictor by using a global history register. The
 ### Tournament (Hybrid) Predictor
 Combines Bimodal and GShare. It uses a "Chooser" table of counters to learn which of the two predictors is more reliable for any given branch.
 
+### Local History Predictor
+The local history predictor maintains a separate history for each branch. A local history table records recent outcomes for individual branches, which is then used to index a pattern history table of 2-bit counters. This helps capture repeating patterns specific to a branch.
+
 ---
 
 ## 4. Project Roadmap (Upcoming Predictors)
-
-### Local History Predictor
-The local history predictor maintains a separate history for each branch. A local history table records recent outcomes for individual branches, which is then used to index a pattern history table of 2-bit counters. This helps capture repeating patterns specific to a branch.
 
 ### GSelect Predictor
 GSelect is similar to GShare but uses concatenation instead of XOR. Bits from the branch PC are combined with the global history register to form the index, allowing a comparison between different indexing strategies.
@@ -121,6 +121,15 @@ g++ -I include src/main.cpp -o simulator
 
 ```bash
 ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
+```
+
+**Local Usage:** ./simulator local <lht_size> <history_bits> <trace_file>
+
+* **lht_size (e.g., 1024):** How many different branches can have their own unique diary.
+* **history_bits (e.g., 10):** How many past events each branch remembers.
+
+```bash
+./simulator local 1024 10 traces/gcc_trace.txt
 ```
 
 ---
