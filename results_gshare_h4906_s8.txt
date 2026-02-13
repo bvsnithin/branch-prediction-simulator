@@ -1,0 +1,8 @@
+ ----------------------------------------------------
+COMMAND: C:\Users\bvsnithin412\Desktop\branch-prediction-simulator\simulator.exe gshare 4906 8 traces/gcc_trace.txt
+Predictor Results: gshare
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               814733
+misprediction rate:                     40.74%
+--------------------------------------------

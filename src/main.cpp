@@ -7,6 +7,7 @@
 #include "../include/GSharePredictor.hpp"
 #include "../include/HybridPredictor.hpp"
 #include "../include/LocalPredictor.hpp"
+#include "../include/GSelectPredictor.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -62,18 +63,14 @@ int main(int argc, char *argv[])
             std::cout << "Predictor Type: GShare | History Bits: " << history << " | Table Size: " << size << std::endl;
             resultFileName = "results_gshare_h" + std::string(argv[2]) + "_s" + std::string(argv[3]) + ".txt";
         }
-        else if (type == "hybrid")
-        {
-            // Command: ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
-            if (argc < 7)
-            {
-                std::cerr << "Error: Hybrid needs [bi_size] [gs_hist] [gs_size] [chooser_size] [trace]" << std::endl;
-                return 1;
+        else if (type == "gselect") {
+            if (argc < 5) 
+            { 
+                std::cerr << "Error: gselect <hist_bits> <size> <trace>" << std::endl; return 1; 
             }
-            predictor = new HybridPredictor(std::stoi(argv[2]), std::stoi(argv[4]), std::stoi(argv[3]), std::stoi(argv[5]));
-            tracePath = argv[6];
-            std::cout << "Predictor Type: Hybrid (Tournament)" << std::endl;
-            resultFileName = "results_hybrid.txt";
+            predictor = new GSelectPredictor(std::stoi(argv[3]), std::stoi(argv[2]));
+            tracePath = argv[4];
+            resultFileName = "results_gselect_h" + std::string(argv[2]) + "_s" + std::string(argv[3]) + ".txt";
         }
         else if (type == "local")
         {
@@ -88,6 +85,19 @@ int main(int argc, char *argv[])
             predictor = new LocalPredictor(lhtSize, bits);
             tracePath = argv[4];
             resultFileName = "results_local_s" + std::string(argv[2]) + "_b" + std::string(argv[3]) + ".txt";
+        }
+        else if (type == "hybrid")
+        {
+            // Command: ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
+            if (argc < 7)
+            {
+                std::cerr << "Error: Hybrid needs [bi_size] [gs_hist] [gs_size] [chooser_size] [trace]" << std::endl;
+                return 1;
+            }
+            predictor = new HybridPredictor(std::stoi(argv[2]), std::stoi(argv[4]), std::stoi(argv[3]), std::stoi(argv[5]));
+            tracePath = argv[6];
+            std::cout << "Predictor Type: Hybrid (Tournament)" << std::endl;
+            resultFileName = "results_hybrid.txt";
         }
     }
     catch (...)

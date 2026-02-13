@@ -1,0 +1,8 @@
+ ----------------------------------------------------
+COMMAND: C:\Users\bvsnithin412\Desktop\branch-prediction-simulator\simulator.exe gselect 4906 8 traces/gcc_trace.txt
+Predictor Results: gselect
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               810597
+misprediction rate:                     40.53%
+--------------------------------------------
