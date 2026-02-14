@@ -1,0 +1,8 @@
+ ----------------------------------------------------
+COMMAND: ./simulator yags 1024 512 6 traces/perl_trace.txt
+Predictor Results: yags
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               120239
+misprediction rate:                     6.01%
+--------------------------------------------

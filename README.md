@@ -55,14 +55,10 @@ The local history predictor maintains a separate history for each branch. A loca
 ### GSelect Predictor
 GSelect is similar to GShare but uses concatenation instead of XOR. Bits from the branch PC are combined with the global history register to form the index, allowing a comparison between different indexing strategies.
 
----
-
-## 4. Project Roadmap (Upcoming Predictors)
-
 ### YAGS Predictor
 YAGS (Yet Another Global Scheme) uses a bimodal predictor as a base and adds small exception caches for taken and not-taken branches. These caches correct cases where the bimodal predictor consistently makes mistakes, improving accuracy with modest complexity.
 
-## 5. Running the Project (Windows)
+## 4. Running the Project (Windows)
 
 ### 1. Install Visual Studio Code
 
@@ -99,14 +95,14 @@ g++ -I include src/main.cpp -o simulator
 
 ---
 
-**Bimodal Usage:** ./simulator bimodal <table_size> <trace_file>
+**1. Bimodal Usage:** ./simulator bimodal <table_size> <trace_file>
 ```bash
 ./simulator bimodal 1024 traces/gcc_trace.txt
 ```
 
 ---
 
-**GShare Usage:** ./simulator gshare <history_bits> <table_size> <trace_file>
+**2. GShare Usage:** ./simulator gshare <history_bits> <table_size> <trace_file>
 
 **Arguments:**
 1. History Bits ($m$): The number of past branch outcomes to remember.
@@ -121,14 +117,14 @@ g++ -I include src/main.cpp -o simulator
 
 ---
 
-**Hybrid Usage:** ./simulator hybrid <bimodal_size> <gshare_history> <gshare_size> <chooser_size> <trace_file>
+**3. Hybrid Usage:** ./simulator hybrid <bimodal_size> <gshare_history> <gshare_size> <chooser_size> <trace_file>
 
 ```bash
 ./simulator hybrid 1024 8 4096 1024 traces/gcc_trace.txt
 ```
 ---
 
-**Local Predictor Usage:** ./simulator local <lht_size> <history_bits> <trace_file>
+**4. Local Predictor Usage:** ./simulator local <lht_size> <history_bits> <trace_file>
 
 * **lht_size (e.g., 1024):** How many different branches can have their own unique diary.
 * **history_bits (e.g., 10):** How many past events each branch remembers.
@@ -137,11 +133,27 @@ g++ -I include src/main.cpp -o simulator
 ./simulator local 1024 10 traces/gcc_trace.txt
 ```
 
-**GSelect Predictor:** ./simulator gselect <history_bits> <table_size> <trace_file>
+---
+
+**5. GSelect Predictor Usage:** ./simulator gselect <history_bits> <table_size> <trace_file>
 
 ```bash
 ./simulator gselect 8 4096 traces/gcc_trace.txt
 ```
+---
+
+**YAGS (Yet Another Global Schema) Predictor Usage:** ./simulator yags <bimodal_size> <cache_size> <history_bits> <trace_file>
+
+* **bimodal_size:** The size of the base "Choice" table.
+
+* **cache_size:** The size of the two exception caches.
+
+* **history_bits:** The history length used for the cache indexing.
+
+```bash
+./simulator yags 1024 512 8 traces/gcc_trace.txt
+```
+
 ---
 
 For macOS users, compile using clang++:

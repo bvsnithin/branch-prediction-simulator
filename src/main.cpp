@@ -8,6 +8,7 @@
 #include "../include/HybridPredictor.hpp"
 #include "../include/LocalPredictor.hpp"
 #include "../include/GSelectPredictor.hpp"
+#include "../include/YAGSPredictor.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -63,10 +64,12 @@ int main(int argc, char *argv[])
             std::cout << "Predictor Type: GShare | History Bits: " << history << " | Table Size: " << size << std::endl;
             resultFileName = "results_gshare_h" + std::string(argv[2]) + "_s" + std::string(argv[3]) + ".txt";
         }
-        else if (type == "gselect") {
-            if (argc < 5) 
-            { 
-                std::cerr << "Error: gselect <hist_bits> <size> <trace>" << std::endl; return 1; 
+        else if (type == "gselect")
+        {
+            if (argc < 5)
+            {
+                std::cerr << "Error: gselect <hist_bits> <size> <trace>" << std::endl;
+                return 1;
             }
             predictor = new GSelectPredictor(std::stoi(argv[3]), std::stoi(argv[2]));
             tracePath = argv[4];
@@ -85,6 +88,18 @@ int main(int argc, char *argv[])
             predictor = new LocalPredictor(lhtSize, bits);
             tracePath = argv[4];
             resultFileName = "results_local_s" + std::string(argv[2]) + "_b" + std::string(argv[3]) + ".txt";
+        }
+        else if (type == "yags")
+        {
+            // Expected: ./simulator yags <bi_size> <cache_size> <hist_bits> <trace>
+            if (argc < 6)
+            {
+                std::cerr << "Error: yags <bi_size> <cache_size> <hist_bits> <trace>" << std::endl;
+                return 1;
+            }
+            predictor = new YAGSPredictor(std::stoi(argv[2]), std::stoi(argv[3]), std::stoi(argv[4]));
+            tracePath = argv[5];
+            resultFileName = "results_yags_bi" + std::string(argv[2]) + "_c" + std::string(argv[3]) + ".txt";
         }
         else if (type == "hybrid")
         {

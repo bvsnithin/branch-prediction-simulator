@@ -1,0 +1,8 @@
+ ----------------------------------------------------
+COMMAND: ./simulator gselect 8 4096 traces/jpeg_trace.txt
+Predictor Results: gselect
+--------------------------------------------
+number of branches:                     2000000
+number of mispredictions:               155704
+misprediction rate:                     7.79%
+--------------------------------------------
